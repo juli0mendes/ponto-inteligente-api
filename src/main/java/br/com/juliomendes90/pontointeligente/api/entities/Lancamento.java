@@ -102,7 +102,7 @@ public class Lancamento implements Serializable {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(name = "tipo", nullable = false)
+	@Column(name = "tipo_lancamento", nullable = false)
 	public TipoEnum getTipo() {
 		return tipo;
 	}
