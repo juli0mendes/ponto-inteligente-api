@@ -8,29 +8,28 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class JwtUser implements UserDetails {
 
 	private static final long serialVersionUID = -4561245912957129158L;
-	
+
 	private Long id;
-	private String userName;
+	private String username;
 	private String password;
 	private Collection<? extends GrantedAuthority> authorities;
-	
-	public JwtUser(Long id, String userName, String password, Collection<? extends GrantedAuthority> authorities) {
-		super();
+
+	public JwtUser(Long id, String username, String password, Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
-		this.userName = userName;
+		this.username = username;
 		this.password = password;
 		this.authorities = authorities;
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
-	
+
 	@Override
 	public String getUsername() {
-		return userName;
+		return username;
 	}
-	
+
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;

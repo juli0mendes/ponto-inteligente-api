@@ -35,7 +35,6 @@ import br.com.juliomendes90.pontointeligente.api.services.EmpresaService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@WithMockUser
 public class EmpresaControllerTest {
 
 	@Autowired
@@ -50,6 +49,7 @@ public class EmpresaControllerTest {
 	private static final String RAZAO_SOCIAL = "Razão Social Teste";
 
 	@Test
+	@WithMockUser
 	public void testBuscarEmpresaPorCnpjInvalido() throws Exception {
 		BDDMockito.given(this.empresaService.buscarPorCnpj(Mockito.anyString())).willReturn(Optional.empty());
 
@@ -60,6 +60,7 @@ public class EmpresaControllerTest {
 	}
 
 	@Test
+	@WithMockUser
 	public void testBuscarEmpresaPorCnpjValido() throws Exception {
 		BDDMockito.given(this.empresaService.buscarPorCnpj(Mockito.anyString()))
 				.willReturn(Optional.of(this.obterDadosEmpresa()));

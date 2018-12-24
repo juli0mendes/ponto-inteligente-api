@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.juliomendes90.pontointeligente.api.response.Response;
-import br.com.juliomendes90.pontointeligente.api.security.dto.JwtAuthenticationDTO;
-import br.com.juliomendes90.pontointeligente.api.security.dto.TokenDTO;
+import br.com.juliomendes90.pontointeligente.api.security.dtos.JwtAuthenticationDTO;
+import br.com.juliomendes90.pontointeligente.api.security.dtos.TokenDTO;
 import br.com.juliomendes90.pontointeligente.api.security.utils.JwtTokenUtil;
 
 @RestController
@@ -34,8 +34,9 @@ import br.com.juliomendes90.pontointeligente.api.security.utils.JwtTokenUtil;
 public class AuthenticationController {
 
 	private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
+
 	private static final String TOKEN_HEADER = "Authorization";
-	private static final String BEADER_PREFIX = "Bearer ";
+	private static final String BEARER_PREFIX = "Bearer ";
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -48,74 +49,56 @@ public class AuthenticationController {
 
 	/**
 	 * Gera e retorna um novo token JWT.
-	 * 
-	 * @param authenticationDTO
+	 *
+	 * @param authenticationDto
 	 * @param result
-	 * @return ResponseEntity<Response<TokenDTO>>
+	 * @return ResponseEntity<Response<TokenDto>>
 	 * @throws AuthenticationException
 	 */
 	@PostMapping
-	public ResponseEntity<Response<TokenDTO>> gerarTokenJwt(@Valid @RequestBody JwtAuthenticationDTO authenticationDTO,
+	public ResponseEntity<Response<TokenDTO>> gerarTokenJwt(@Valid @RequestBody JwtAuthenticationDTO authenticationDto,
 			BindingResult result) throws AuthenticationException {
-
 		Response<TokenDTO> response = new Response<TokenDTO>();
-
 		if (result.hasErrors()) {
 			log.error("Erro validando lançamento: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-
 			return ResponseEntity.badRequest().body(response);
 		}
-
-		log.info("Gerando token para o email {}.", authenticationDTO.getEmail());
-
+		log.info("Gerando token para o email {}.", authenticationDto.getEmail());
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(authenticationDTO.getEmail(), authenticationDTO.getSenha()));
-
+				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getSenha()));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-
-		UserDetails userDetails = this.userDetailsService.loadUserByUsername(authenticationDTO.getEmail());
-
+		UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationDto.getEmail());
 		String token = jwtTokenUtil.obterToken(userDetails);
-
 		response.setData(new TokenDTO(token));
-
 		return ResponseEntity.ok(response);
 	}
 
 	/**
 	 * Gera um novo token com uma nova data de expiração.
-	 * 
+	 *
 	 * @param request
-	 * @return ResponseEntity<Response<TokenDTO>>
+	 * @return ResponseEntity<Response<TokenDto>>
 	 */
 	@PostMapping(value = "/refresh")
 	public ResponseEntity<Response<TokenDTO>> gerarRefreshTokenJwt(HttpServletRequest request) {
-
 		log.info("Gerando refresh token JWT.");
-
 		Response<TokenDTO> response = new Response<TokenDTO>();
-
 		Optional<String> token = Optional.ofNullable(request.getHeader(TOKEN_HEADER));
-
-		if (token.isPresent() && token.get().startsWith(BEADER_PREFIX)) {
+		if (token.isPresent() && token.get().startsWith(BEARER_PREFIX)) {
 			token = Optional.of(token.get().substring(7));
 		}
-
 		if (!token.isPresent()) {
 			response.getErrors().add("Token não informado.");
 		} else if (!jwtTokenUtil.tokenValido(token.get())) {
 			response.getErrors().add("Token inválido ou expirado.");
 		}
-
 		if (!response.getErrors().isEmpty()) {
 			return ResponseEntity.badRequest().body(response);
 		}
-
 		String refreshedToken = jwtTokenUtil.refreshToken(token.get());
-
 		response.setData(new TokenDTO(refreshedToken));
-
 		return ResponseEntity.ok(response);
 	}
+
 }

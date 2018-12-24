@@ -11,7 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.juliomendes90.pontointeligente.api.security.enums.PerfilEnum;
+import br.com.juliomendes90.pontointeligente.api.enums.PerfilEnum;
 
 @Entity
 @Table(name = "usuario")
@@ -22,8 +22,9 @@ public class Usuario implements Serializable {
 	private Long id;
 	private String email;
 	private String senha;
+
 	private PerfilEnum perfil;
-	
+
 	public Usuario() {
 	}
 
@@ -46,6 +47,16 @@ public class Usuario implements Serializable {
 		this.email = email;
 	}
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "perfil", nullable = false)
+	public PerfilEnum getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(PerfilEnum perfil) {
+		this.perfil = perfil;
+	}
+
 	@Column(name = "senha", nullable = false)
 	public String getSenha() {
 		return senha;
@@ -55,15 +66,4 @@ public class Usuario implements Serializable {
 		this.senha = senha;
 	}
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "pefil", nullable = false)
-	public PerfilEnum getPerfil() {
-		return perfil;
-	}
-
-	public void setPerfil(PerfilEnum perfil) {
-		this.perfil = perfil;
-	}
-	
-	
 }
