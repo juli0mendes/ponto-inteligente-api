@@ -28,4 +28,17 @@ public class PasswordUtils {
 		
 		return bCryptEncoder.encode(senha);
 	}
+	
+	/**
+	 * Verifica se senha é valida.
+	 * 
+	 * @param senha
+	 * @param senhaEncoded
+	 * @return boolean
+	 */
+	public static boolean senhaValida(String senha, String senhaEncoded) {
+		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+		
+		return bCryptPasswordEncoder.matches(senha, senhaEncoded);
+	}
 }
