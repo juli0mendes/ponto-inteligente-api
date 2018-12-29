@@ -30,10 +30,10 @@ CREATE TABLE `funcionario` (
   KEY `FK4cm1kg523jlopyexjbmi6y54j` (`empresa_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `lacamento`;
+DROP TABLE IF EXISTS `lancamento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `lacamento` (
+CREATE TABLE `lancamento` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `data` datetime NOT NULL,
   `data_atualizacao` datetime NOT NULL,
